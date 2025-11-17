@@ -1,0 +1,148 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { Resend } from "https://esm.sh/resend@2.0.0";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { candidatoId, etapa, tipo } = await req.json();
+
+    console.log("Enviando e-mail:", { candidatoId, etapa, tipo });
+
+    const { data: candidato, error: candidatoError } = await supabase
+      .from('candidatos')
+      .select('nome, email, vaga_id')
+      .eq('id', candidatoId)
+      .single();
+
+    if (candidatoError) throw candidatoError;
+
+    const { data: vaga, error: vagaError } = await supabase
+      .from('vagas')
+      .select('titulo')
+      .eq('id', candidato.vaga_id)
+      .single();
+
+    if (vagaError) throw vagaError;
+
+    const etapaNomes: Record<string, string> = {
+      inscrito: "Inscrição Recebida",
+      triagem: "Triagem Curricular",
+      entrevista: "Entrevista",
+      teste_tecnico: "Teste Técnico",
+      finalizado: "Processo Finalizado"
+    };
+
+    const assunto = tipo === 'confirmacao'
+      ? `Pneu Forte - Candidatura Recebida`
+      : `Pneu Forte - Atualização da sua Candidatura`;
+
+    const mensagem = tipo === 'confirmacao'
+      ? `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #FFD000; font-size: 28px; margin: 0;">Pneu Forte</h1>
+            <div style="width: 60px; height: 4px; background: #FFD000; margin: 15px auto;"></div>
+          </div>
+          
+          <h2 style="color: #FFD000; font-size: 24px;">Obrigado por se candidatar!</h2>
+          
+          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
+            Olá, <strong>${candidato.nome}</strong>!
+          </p>
+          
+          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
+            Sua candidatura para a vaga de <strong style="color: #FFD000;">${vaga.titulo}</strong> foi recebida com sucesso!
+          </p>
+          
+          <div style="background: rgba(255, 208, 0, 0.1); border-left: 4px solid #FFD000; padding: 20px; margin: 25px 0; border-radius: 8px;">
+            <p style="margin: 0; color: #ffffff; font-size: 15px;">
+              Nossa equipe de Recursos Humanos analisará seu perfil cuidadosamente e você receberá notícias sobre as próximas etapas em breve.
+            </p>
+          </div>
+          
+          <p style="font-size: 14px; color: #a0a0a0; margin-top: 30px;">
+            Atenciosamente,<br>
+            <strong style="color: #FFD000;">Equipe Pneu Forte</strong>
+          </p>
+          
+          <div style="border-top: 2px solid #333; margin-top: 40px; padding-top: 20px; text-align: center;">
+            <p style="font-size: 12px; color: #666; margin: 0;">
+              © ${new Date().getFullYear()} Pneu Forte - Todos os direitos reservados
+            </p>
+          </div>
+        </div>`
+      : `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #FFD000; font-size: 28px; margin: 0;">Pneu Forte</h1>
+            <div style="width: 60px; height: 4px; background: #FFD000; margin: 15px auto;"></div>
+          </div>
+          
+          <h2 style="color: #FFD000; font-size: 24px;">Atualização do Processo Seletivo</h2>
+          
+          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
+            Olá, <strong>${candidato.nome}</strong>!
+          </p>
+          
+          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
+            Sua candidatura para a vaga de <strong style="color: #FFD000;">${vaga.titulo}</strong> avançou para a próxima etapa.
+          </p>
+          
+          <div style="background: rgba(255, 208, 0, 0.1); border-left: 4px solid #FFD000; padding: 20px; margin: 25px 0; border-radius: 8px;">
+            <p style="margin: 0; color: #ffffff; font-size: 18px;">
+              <strong>Etapa Atual:</strong> <span style="color: #FFD000;">${etapaNomes[etapa]}</span>
+            </p>
+          </div>
+          
+          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
+            Continue acompanhando seu e-mail para mais atualizações sobre o processo seletivo.
+          </p>
+          
+          <p style="font-size: 14px; color: #a0a0a0; margin-top: 30px;">
+            Atenciosamente,<br>
+            <strong style="color: #FFD000;">Equipe Pneu Forte</strong>
+          </p>
+          
+          <div style="border-top: 2px solid #333; margin-top: 40px; padding-top: 20px; text-align: center;">
+            <p style="font-size: 12px; color: #666; margin: 0;">
+              © ${new Date().getFullYear()} Pneu Forte - Todos os direitos reservados
+            </p>
+          </div>
+        </div>`;
+
+    const { error: emailError } = await resend.emails.send({
+      from: 'Pneu Forte <onboarding@resend.dev>',
+      to: [candidato.email],
+      subject: assunto,
+      html: mensagem,
+    });
+
+    if (emailError) throw emailError;
+
+    console.log("E-mail enviado com sucesso");
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+    );
+  } catch (error: any) {
+    console.error('Erro ao enviar e-mail:', error);
+    return new Response(
+      JSON.stringify({ error: error?.message || 'Erro desconhecido' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    );
+  }
+});
