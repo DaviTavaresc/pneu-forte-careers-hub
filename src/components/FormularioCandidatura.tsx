@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ interface FormData {
   email: string;
   telefone: string;
   curriculo: FileList;
+  lgpd: boolean;
 }
 
 export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidaturaProps) {
@@ -164,6 +166,30 @@ export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidat
             {errors.curriculo && (
               <p className="text-sm text-red-500 mt-1">{errors.curriculo.message}</p>
             )}
+          </div>
+
+          <div className="flex items-start space-x-3 p-4 bg-muted/30 rounded-lg border border-border/50">
+            <Checkbox
+              id="lgpd"
+              {...register("lgpd", { 
+                required: "Você deve aceitar os termos da LGPD para continuar" 
+              })}
+            />
+            <div className="flex-1">
+              <Label 
+                htmlFor="lgpd" 
+                className="text-sm text-foreground leading-relaxed cursor-pointer"
+              >
+                Autorizo o tratamento dos meus dados pessoais pela Pneu Forte conforme a{" "}
+                <strong>Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018)</strong>. 
+                Os dados fornecidos serão utilizados exclusivamente para fins de recrutamento 
+                e seleção, sendo armazenados de forma segura e não compartilhados com terceiros 
+                sem autorização prévia.
+              </Label>
+              {errors.lgpd && (
+                <p className="text-sm text-red-500 mt-2">{errors.lgpd.message}</p>
+              )}
+            </div>
           </div>
 
           <Button
