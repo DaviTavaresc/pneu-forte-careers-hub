@@ -199,6 +199,7 @@ export type Database = {
         | "entrevista"
         | "teste_tecnico"
         | "finalizado"
+        | "reprovado"
       status_vaga: "ativa" | "pausada" | "encerrada"
     }
     CompositeTypes: {
@@ -334,6 +335,7 @@ export const Constants = {
         "entrevista",
         "teste_tecnico",
         "finalizado",
+        "reprovado",
       ],
       status_vaga: ["ativa", "pausada", "encerrada"],
     },

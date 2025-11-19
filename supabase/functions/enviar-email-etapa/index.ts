@@ -44,12 +44,53 @@ serve(async (req) => {
       triagem: "Triagem Curricular",
       entrevista: "Entrevista",
       teste_tecnico: "Teste Técnico",
-      finalizado: "Processo Finalizado"
+      finalizado: "Processo Finalizado",
+      reprovado: "Não Aprovado"
     };
 
-    const assunto = `Pneu Forte - Atualização da sua Candidatura`;
+    const isReprovado = nova_etapa === 'reprovado';
+    const assunto = isReprovado 
+      ? `Pneu Forte - Agradecimento pela sua Candidatura`
+      : `Pneu Forte - Atualização da sua Candidatura`;
 
-    const mensagem = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
+    const mensagem = isReprovado ? `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #FFD000; font-size: 28px; margin: 0;">Pneu Forte</h1>
+            <div style="width: 60px; height: 4px; background: #FFD000; margin: 15px auto;"></div>
+          </div>
+          
+          <h2 style="color: #FFD000; font-size: 24px;">Agradecemos sua Participação</h2>
+          
+          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
+            Olá, <strong>${candidato.nome}</strong>!
+          </p>
+          
+          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
+            Agradecemos imensamente seu interesse em fazer parte da equipe Pneu Forte e pelo tempo dedicado ao processo seletivo para a vaga de <strong style="color: #FFD000;">${vaga.titulo}</strong>.
+          </p>
+          
+          <div style="background: rgba(255, 208, 0, 0.1); border-left: 4px solid #FFD000; padding: 20px; margin: 25px 0; border-radius: 8px;">
+            <p style="margin: 0; color: #ffffff; font-size: 15px;">
+              Após análise cuidadosa, informamos que optamos por seguir com outros candidatos nesta oportunidade. 
+              No entanto, seu perfil ficará em nosso banco de dados para futuras vagas que possam estar alinhadas com suas qualificações.
+            </p>
+          </div>
+          
+          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
+            Desejamos muito sucesso em sua jornada profissional e esperamos contar com sua participação em próximas oportunidades.
+          </p>
+          
+          <p style="font-size: 14px; color: #a0a0a0; margin-top: 30px;">
+            Atenciosamente,<br>
+            <strong style="color: #FFD000;">Equipe Pneu Forte</strong>
+          </p>
+          
+          <div style="border-top: 2px solid #333; margin-top: 40px; padding-top: 20px; text-align: center;">
+            <p style="font-size: 12px; color: #666; margin: 0;">
+              © ${new Date().getFullYear()} Pneu Forte - Todos os direitos reservados
+            </p>
+          </div>
+        </div>` : `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #FFD000; font-size: 28px; margin: 0;">Pneu Forte</h1>
             <div style="width: 60px; height: 4px; background: #FFD000; margin: 15px auto;"></div>
