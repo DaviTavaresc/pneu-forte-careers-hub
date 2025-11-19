@@ -31,10 +31,12 @@ serve(async (req) => {
 
     if (downloadError) throw downloadError;
 
-    // Converter PDF para texto (simplificado - em produção usar biblioteca de PDF)
-    const fileText = await fileData.text();
+    // Converter o blob para ArrayBuffer e depois para base64
+    const arrayBuffer = await fileData.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    const base64Pdf = btoa(String.fromCharCode(...uint8Array));
     
-    // Gerar resumo com IA
+    // Gerar resumo com IA usando modelo com capacidade de visão para PDFs
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -46,17 +48,30 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Você é um assistente de RH especializado em análise de currículos. Analise o currículo e forneça um resumo objetivo em 2-4 frases, destacando: experiência profissional relevante, principais habilidades técnicas e pontos fortes do candidato.'
+            content: 'Você é um assistente de RH especializado em análise de currículos. Analise o currículo fornecido e forneça um resumo objetivo em 2-4 frases, destacando: experiência profissional relevante, principais habilidades técnicas e pontos fortes do candidato.'
           },
           {
             role: 'user',
-            content: `Analise este currículo e forneça um resumo profissional:\n\n${fileText.substring(0, 4000)}`
+            content: [
+              {
+                type: 'text',
+                text: 'Analise este currículo em PDF e forneça um resumo profissional objetivo.'
+              },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: `data:application/pdf;base64,${base64Pdf}`
+                }
+              }
+            ]
           }
         ],
       }),
     });
 
     if (!aiResponse.ok) {
+      const errorText = await aiResponse.text();
+      console.error('Erro na API de IA:', aiResponse.status, errorText);
       throw new Error(`Erro na API de IA: ${aiResponse.status}`);
     }
 

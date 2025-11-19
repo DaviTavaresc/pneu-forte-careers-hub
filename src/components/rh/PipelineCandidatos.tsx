@@ -202,6 +202,32 @@ export function PipelineCandidatos() {
                                             Resumo IA
                                           </strong>
                                           <p className="text-sm">{candidato.resumo_ia}</p>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="mt-2"
+                                            onClick={async () => {
+                                              toast({ title: "Regenerando resumo...", description: "Aguarde um momento." });
+                                              const { error } = await supabase.functions.invoke('gerar-resumo-curriculo', {
+                                                body: { 
+                                                  candidatoId: candidato.id, 
+                                                  curriculoUrl: candidato.curriculo_url 
+                                                }
+                                              });
+                                              if (error) {
+                                                toast({ 
+                                                  title: "Erro", 
+                                                  description: "Não foi possível regenerar o resumo.",
+                                                  variant: "destructive"
+                                                });
+                                              } else {
+                                                toast({ title: "Sucesso!", description: "Resumo regenerado com sucesso." });
+                                                queryClient.invalidateQueries({ queryKey: ['candidatos-pipeline'] });
+                                              }
+                                            }}
+                                          >
+                                            Regenerar Resumo
+                                          </Button>
                                         </div>
                                       )}
 
