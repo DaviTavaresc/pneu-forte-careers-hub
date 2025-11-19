@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Upload, CheckCircle2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -23,11 +24,19 @@ interface FormData {
 
 export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidaturaProps) {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit = async (data: FormData) => {
+    // Verificar se está logado
+    if (!user) {
+      toast.error('Você precisa estar logado para se candidatar');
+      navigate('/auth');
+      return;
+    }
+
     setIsLoading(true);
     
     try {
@@ -50,6 +59,7 @@ export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidat
         .from('candidatos')
         .insert({
           vaga_id: vagaId,
+          user_id: user.id,
           nome: data.nome,
           email: data.email,
           telefone: data.telefone,

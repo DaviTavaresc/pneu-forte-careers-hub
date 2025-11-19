@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Vaga from "./pages/Vaga";
 import Auth from "./pages/Auth";
 import RHDashboard from "./pages/RHDashboard";
+import MinhasCandidaturas from "./pages/MeusCandidaturas";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/vaga/:id" element={<Vaga />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/rh" element={<RHDashboard />} />
+          <Route path="/minhas-candidaturas" element={<MinhasCandidaturas />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
