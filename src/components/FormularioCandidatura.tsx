@@ -66,6 +66,7 @@ export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidat
           nome: data.nome,
           email: data.email,
           telefone: data.telefone,
+          cpf: data.cpf,
           curriculo_url: publicUrl,
           etapa_atual: 'inscrito',
         })
