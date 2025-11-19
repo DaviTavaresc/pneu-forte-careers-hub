@@ -4,11 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Briefcase, Building2, ChevronRight } from "lucide-react";
+import { Search, MapPin, Briefcase, Building2, ChevronRight, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Index() {
   const navigate = useNavigate();
+  const { user, isRH, signOut } = useAuth();
   const [busca, setBusca] = useState("");
   const [filtroLocalidade, setFiltroLocalidade] = useState("todos");
   const [filtroArea, setFiltroArea] = useState("todos");
@@ -55,16 +57,47 @@ export default function Index() {
       <div className="hero-gradient text-white py-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
         
-        {/* Botão Área RH - Posicionado no canto superior direito */}
-        <div className="absolute top-6 right-6 z-20">
-          <Button 
-            onClick={() => navigate('/auth')}
-            variant="outline"
-            className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
-          >
-            <Building2 className="h-4 w-4 mr-2" />
-            Área RH
-          </Button>
+        {/* Botões de navegação - Canto superior direito */}
+        <div className="absolute top-6 right-6 z-20 flex gap-3">
+          {user ? (
+            <>
+              <Button 
+                onClick={() => navigate('/minhas-candidaturas')}
+                variant="outline"
+                className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Minhas Candidaturas
+              </Button>
+              {isRH && (
+                <Button 
+                  onClick={() => navigate('/rh')}
+                  variant="outline"
+                  className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
+                >
+                  <Building2 className="h-4 w-4 mr-2" />
+                  Dashboard RH
+                </Button>
+              )}
+              <Button 
+                onClick={signOut}
+                variant="outline"
+                size="icon"
+                className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </>
+          ) : (
+            <Button 
+              onClick={() => navigate('/auth')}
+              variant="outline"
+              className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
+            >
+              <User className="h-4 w-4 mr-2" />
+              Entrar / Cadastrar
+            </Button>
+          )}
         </div>
 
         <div className="container mx-auto max-w-6xl text-center relative z-10">

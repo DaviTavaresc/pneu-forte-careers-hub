@@ -24,6 +24,7 @@ export type Database = {
           nome: string
           resumo_ia: string | null
           telefone: string
+          user_id: string | null
           vaga_id: string
         }
         Insert: {
@@ -35,6 +36,7 @@ export type Database = {
           nome: string
           resumo_ia?: string | null
           telefone: string
+          user_id?: string | null
           vaga_id: string
         }
         Update: {
@@ -46,6 +48,7 @@ export type Database = {
           nome?: string
           resumo_ia?: string | null
           telefone?: string
+          user_id?: string | null
           vaga_id?: string
         }
         Relationships: [
