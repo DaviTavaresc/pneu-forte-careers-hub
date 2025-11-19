@@ -7,6 +7,7 @@ import { LogOut, Building2 } from 'lucide-react';
 import { GestaoVagas } from '@/components/rh/GestaoVagas';
 import { PipelineCandidatos } from '@/components/rh/PipelineCandidatos';
 import { Metricas } from '@/components/rh/Metricas';
+import { GestaoUsuarios } from '@/components/rh/GestaoUsuarios';
 
 export default function RHDashboard() {
   const { user, isRH, loading, signOut } = useAuth();
@@ -52,10 +53,11 @@ export default function RHDashboard() {
       {/* Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="metricas" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="metricas">Métricas</TabsTrigger>
             <TabsTrigger value="candidatos">Candidatos</TabsTrigger>
             <TabsTrigger value="vagas">Vagas</TabsTrigger>
+            <TabsTrigger value="usuarios">Usuários</TabsTrigger>
           </TabsList>
 
           <TabsContent value="metricas">
@@ -68,6 +70,10 @@ export default function RHDashboard() {
 
           <TabsContent value="vagas">
             <GestaoVagas />
+          </TabsContent>
+
+          <TabsContent value="usuarios">
+            <GestaoUsuarios />
           </TabsContent>
         </Tabs>
       </main>
