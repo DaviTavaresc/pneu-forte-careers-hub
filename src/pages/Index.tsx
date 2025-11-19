@@ -54,6 +54,19 @@ export default function Index() {
       {/* Hero Section */}
       <div className="hero-gradient text-white py-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+        
+        {/* Botão Área RH - Posicionado no canto superior direito */}
+        <div className="absolute top-6 right-6 z-20">
+          <Button 
+            onClick={() => navigate('/auth')}
+            variant="outline"
+            className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
+          >
+            <Building2 className="h-4 w-4 mr-2" />
+            Área RH
+          </Button>
+        </div>
+
         <div className="container mx-auto max-w-6xl text-center relative z-10">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
             Acelere sua carreira com a{" "}
