@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { FileText, Mail, Phone, Calendar, Download } from 'lucide-react';
+import { FileText, Mail, Phone, Calendar, Download, XCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
@@ -19,6 +19,7 @@ const ETAPAS: { id: EtapaCandidato; nome: string; cor: string }[] = [
   { id: 'entrevista', nome: 'Entrevista', cor: 'bg-purple-500' },
   { id: 'teste_tecnico', nome: 'Teste Técnico', cor: 'bg-orange-500' },
   { id: 'finalizado', nome: 'Finalizado', cor: 'bg-green-500' },
+  { id: 'reprovado', nome: 'Não Aprovado', cor: 'bg-red-500' },
 ];
 
 export function PipelineCandidatos() {
@@ -264,6 +265,26 @@ export function PipelineCandidatos() {
                                           Baixar Currículo
                                         </Button>
                                       </div>
+
+                                      {candidato.etapa_atual !== 'reprovado' && (
+                                        <div>
+                                          <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            onClick={async () => {
+                                              if (confirm(`Tem certeza que deseja reprovar ${candidato.nome}? Será enviado um e-mail de agradecimento.`)) {
+                                                await atualizarEtapa.mutateAsync({ 
+                                                  id: candidato.id, 
+                                                  etapa: 'reprovado' 
+                                                });
+                                              }
+                                            }}
+                                          >
+                                            <XCircle className="h-4 w-4 mr-2" />
+                                            Reprovar Candidato
+                                          </Button>
+                                        </div>
+                                      )}
 
                                       <div>
                                         <h4 className="font-semibold mb-2">Notas Internas</h4>
