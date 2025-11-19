@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       candidatos: {
         Row: {
+          cpf: string
           curriculo_url: string
           email: string
           enviado_em: string
@@ -28,6 +29,7 @@ export type Database = {
           vaga_id: string
         }
         Insert: {
+          cpf?: string
           curriculo_url: string
           email: string
           enviado_em?: string
@@ -40,6 +42,7 @@ export type Database = {
           vaga_id: string
         }
         Update: {
+          cpf?: string
           curriculo_url?: string
           email?: string
           enviado_em?: string
