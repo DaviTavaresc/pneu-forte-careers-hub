@@ -27,7 +27,7 @@ export function GestaoVagas() {
     modelo_trabalho: '',
     tipo_contrato: '',
     salario: '',
-    status: 'ativa' as 'ativa' | 'pausada' | 'fechada',
+    status: 'ativa' as 'ativa' | 'pausada' | 'encerrada',
   });
 
   const { data: vagas = [], isLoading } = useQuery({
@@ -87,7 +87,7 @@ export function GestaoVagas() {
   });
 
   const toggleStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: 'ativa' | 'pausada' | 'fechada' }) => {
+    mutationFn: async ({ id, status }: { id: string; status: 'ativa' | 'pausada' | 'encerrada' }) => {
       const { error } = await supabase
         .from('vagas')
         .update({ status })
@@ -274,7 +274,7 @@ export function GestaoVagas() {
                     <SelectContent>
                       <SelectItem value="ativa">Ativa</SelectItem>
                       <SelectItem value="pausada">Pausada</SelectItem>
-                      <SelectItem value="fechada">Fechada</SelectItem>
+                      <SelectItem value="encerrada">Encerrada</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

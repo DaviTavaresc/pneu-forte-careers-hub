@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,14 +11,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 
-const ETAPAS = [
+type EtapaCandidato = Database['public']['Enums']['etapa_candidato'];
+
+const ETAPAS: { id: EtapaCandidato; nome: string; cor: string }[] = [
   { id: 'inscrito', nome: 'Inscritos', cor: 'bg-blue-500' },
   { id: 'triagem', nome: 'Triagem', cor: 'bg-yellow-500' },
   { id: 'entrevista', nome: 'Entrevista', cor: 'bg-purple-500' },
   { id: 'teste_tecnico', nome: 'Teste Técnico', cor: 'bg-orange-500' },
-  { id: 'proposta', nome: 'Proposta', cor: 'bg-green-500' },
-  { id: 'contratado', nome: 'Contratado', cor: 'bg-emerald-600' },
-  { id: 'rejeitado', nome: 'Rejeitado', cor: 'bg-red-500' },
+  { id: 'finalizado', nome: 'Finalizado', cor: 'bg-green-500' },
 ];
 
 export function PipelineCandidatos() {
@@ -53,7 +54,7 @@ export function PipelineCandidatos() {
   });
 
   const atualizarEtapa = useMutation({
-    mutationFn: async ({ id, etapa }: { id: string; etapa: string }) => {
+    mutationFn: async ({ id, etapa }: { id: string; etapa: EtapaCandidato }) => {
       const { error } = await supabase
         .from('candidatos')
         .update({ etapa_atual: etapa })
@@ -94,7 +95,7 @@ export function PipelineCandidatos() {
     if (!result.destination) return;
 
     const candidatoId = result.draggableId;
-    const novaEtapa = result.destination.droppableId;
+    const novaEtapa = result.destination.droppableId as EtapaCandidato;
 
     atualizarEtapa.mutate({ id: candidatoId, etapa: novaEtapa });
   };
