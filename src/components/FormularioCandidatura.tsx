@@ -20,6 +20,7 @@ interface FormData {
   nome: string;
   email: string;
   telefone: string;
+  cpf: string;
   curriculo: FileList;
   lgpd: boolean;
 }
@@ -148,6 +149,26 @@ export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidat
             />
             {errors.telefone && (
               <p className="text-sm text-red-500 mt-1">{errors.telefone.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="cpf" className="text-foreground">CPF</Label>
+            <Input
+              id="cpf"
+              {...register("cpf", { 
+                required: "CPF é obrigatório",
+                pattern: {
+                  value: /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+                  message: "CPF inválido. Use o formato: XXX.XXX.XXX-XX"
+                }
+              })}
+              className="mt-2"
+              placeholder="000.000.000-00"
+              maxLength={14}
+            />
+            {errors.cpf && (
+              <p className="text-sm text-red-500 mt-1">{errors.cpf.message}</p>
             )}
           </div>
 
