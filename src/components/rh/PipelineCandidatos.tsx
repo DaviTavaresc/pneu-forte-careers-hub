@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { FileText, Mail, Phone, Calendar, ExternalLink } from 'lucide-react';
+import { FileText, Mail, Phone, Calendar, Download } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
@@ -235,10 +235,33 @@ export function PipelineCandidatos() {
                                         <Button
                                           variant="outline"
                                           size="sm"
-                                          onClick={() => window.open(candidato.curriculo_url, '_blank')}
+                                          onClick={async () => {
+                                            try {
+                                              const response = await fetch(candidato.curriculo_url);
+                                              const blob = await response.blob();
+                                              const url = window.URL.createObjectURL(blob);
+                                              const link = document.createElement('a');
+                                              link.href = url;
+                                              link.download = `curriculo_${candidato.nome.replace(/\s+/g, '_')}.pdf`;
+                                              document.body.appendChild(link);
+                                              link.click();
+                                              document.body.removeChild(link);
+                                              window.URL.revokeObjectURL(url);
+                                              toast({
+                                                title: "Download iniciado",
+                                                description: "O currículo está sendo baixado.",
+                                              });
+                                            } catch (error) {
+                                              toast({
+                                                title: "Erro no download",
+                                                description: "Não foi possível baixar o currículo.",
+                                                variant: "destructive",
+                                              });
+                                            }
+                                          }}
                                         >
-                                          <ExternalLink className="h-4 w-4 mr-2" />
-                                          Ver Currículo
+                                          <Download className="h-4 w-4 mr-2" />
+                                          Baixar Currículo
                                         </Button>
                                       </div>
 
