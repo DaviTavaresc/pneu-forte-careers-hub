@@ -19,14 +19,14 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { candidatoId, etapa, tipo } = await req.json();
+    const { candidato_id, nova_etapa } = await req.json();
 
-    console.log("Enviando e-mail:", { candidatoId, etapa, tipo });
+    console.log("Enviando e-mail:", { candidato_id, nova_etapa });
 
     const { data: candidato, error: candidatoError } = await supabase
       .from('candidatos')
       .select('nome, email, vaga_id')
-      .eq('id', candidatoId)
+      .eq('id', candidato_id)
       .single();
 
     if (candidatoError) throw candidatoError;
@@ -47,45 +47,9 @@ serve(async (req) => {
       finalizado: "Processo Finalizado"
     };
 
-    const assunto = tipo === 'confirmacao'
-      ? `Pneu Forte - Candidatura Recebida`
-      : `Pneu Forte - Atualização da sua Candidatura`;
+    const assunto = `Pneu Forte - Atualização da sua Candidatura`;
 
-    const mensagem = tipo === 'confirmacao'
-      ? `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
-          <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #FFD000; font-size: 28px; margin: 0;">Pneu Forte</h1>
-            <div style="width: 60px; height: 4px; background: #FFD000; margin: 15px auto;"></div>
-          </div>
-          
-          <h2 style="color: #FFD000; font-size: 24px;">Obrigado por se candidatar!</h2>
-          
-          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
-            Olá, <strong>${candidato.nome}</strong>!
-          </p>
-          
-          <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
-            Sua candidatura para a vaga de <strong style="color: #FFD000;">${vaga.titulo}</strong> foi recebida com sucesso!
-          </p>
-          
-          <div style="background: rgba(255, 208, 0, 0.1); border-left: 4px solid #FFD000; padding: 20px; margin: 25px 0; border-radius: 8px;">
-            <p style="margin: 0; color: #ffffff; font-size: 15px;">
-              Nossa equipe de Recursos Humanos analisará seu perfil cuidadosamente e você receberá notícias sobre as próximas etapas em breve.
-            </p>
-          </div>
-          
-          <p style="font-size: 14px; color: #a0a0a0; margin-top: 30px;">
-            Atenciosamente,<br>
-            <strong style="color: #FFD000;">Equipe Pneu Forte</strong>
-          </p>
-          
-          <div style="border-top: 2px solid #333; margin-top: 40px; padding-top: 20px; text-align: center;">
-            <p style="font-size: 12px; color: #666; margin: 0;">
-              © ${new Date().getFullYear()} Pneu Forte - Todos os direitos reservados
-            </p>
-          </div>
-        </div>`
-      : `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
+    const mensagem = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #FFD000; font-size: 28px; margin: 0;">Pneu Forte</h1>
             <div style="width: 60px; height: 4px; background: #FFD000; margin: 15px auto;"></div>
@@ -98,17 +62,17 @@ serve(async (req) => {
           </p>
           
           <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
-            Sua candidatura para a vaga de <strong style="color: #FFD000;">${vaga.titulo}</strong> avançou para a próxima etapa.
+            Temos boas notícias sobre sua candidatura para a vaga de <strong style="color: #FFD000;">${vaga.titulo}</strong>!
           </p>
           
           <div style="background: rgba(255, 208, 0, 0.1); border-left: 4px solid #FFD000; padding: 20px; margin: 25px 0; border-radius: 8px;">
-            <p style="margin: 0; color: #ffffff; font-size: 18px;">
-              <strong>Etapa Atual:</strong> <span style="color: #FFD000;">${etapaNomes[etapa]}</span>
+            <p style="margin: 0; color: #ffffff; font-size: 15px;">
+              Você avançou para a etapa: <strong style="color: #FFD000;">${etapaNomes[nova_etapa] || nova_etapa}</strong>
             </p>
           </div>
           
           <p style="font-size: 16px; line-height: 1.8; color: #e0e0e0;">
-            Continue acompanhando seu e-mail para mais atualizações sobre o processo seletivo.
+            Em breve, nossa equipe entrará em contato com mais informações sobre os próximos passos.
           </p>
           
           <p style="font-size: 14px; color: #a0a0a0; margin-top: 30px;">
@@ -123,7 +87,7 @@ serve(async (req) => {
           </div>
         </div>`;
 
-    const { error: emailError } = await resend.emails.send({
+    const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'Pneu Forte <onboarding@resend.dev>',
       to: [candidato.email],
       subject: assunto,
