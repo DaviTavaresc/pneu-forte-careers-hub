@@ -92,6 +92,23 @@ export function PipelineCandidatos() {
     },
   });
 
+  const deletarCandidato = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('candidatos')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['candidatos-pipeline'] });
+      toast({
+        title: "Candidato removido",
+        description: "A candidatura foi removida permanentemente do sistema.",
+      });
+    },
+  });
+
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
@@ -209,10 +226,10 @@ export function PipelineCandidatos() {
                                             className="mt-2"
                                             onClick={async () => {
                                               toast({ title: "Regenerando resumo...", description: "Aguarde um momento." });
-                                              const { error } = await supabase.functions.invoke('gerar-resumo-curriculo', {
+                                               const { error } = await supabase.functions.invoke('gerar-resumo-curriculo', {
                                                 body: { 
-                                                  candidatoId: candidato.id, 
-                                                  curriculoUrl: candidato.curriculo_url 
+                                                  candidato_id: candidato.id, 
+                                                  curriculo_url: candidato.curriculo_url 
                                                 }
                                               });
                                               if (error) {
@@ -267,10 +284,11 @@ export function PipelineCandidatos() {
                                       </div>
 
                                       {candidato.etapa_atual !== 'reprovado' && (
-                                        <div>
+                                        <div className="space-y-2">
                                           <Button
                                             variant="destructive"
                                             size="sm"
+                                            className="w-full"
                                             onClick={async () => {
                                               if (confirm(`Tem certeza que deseja reprovar ${candidato.nome}? Será enviado um e-mail de agradecimento.`)) {
                                                 await atualizarEtapa.mutateAsync({ 
@@ -282,6 +300,22 @@ export function PipelineCandidatos() {
                                           >
                                             <XCircle className="h-4 w-4 mr-2" />
                                             Reprovar Candidato
+                                          </Button>
+                                          
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-full border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                                            onClick={async () => {
+                                              if (confirm(`⚠️ ATENÇÃO: Deseja REMOVER PERMANENTEMENTE a candidatura de ${candidato.nome}? Esta ação NÃO pode ser desfeita e NÃO enviará email ao candidato.`)) {
+                                                if (confirm('Confirme novamente: Esta ação é IRREVERSÍVEL!')) {
+                                                  await deletarCandidato.mutateAsync(candidato.id);
+                                                }
+                                              }
+                                            }}
+                                          >
+                                            <XCircle className="h-4 w-4 mr-2" />
+                                            Remover Permanentemente
                                           </Button>
                                         </div>
                                       )}
