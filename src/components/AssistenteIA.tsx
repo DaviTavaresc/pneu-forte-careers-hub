@@ -23,7 +23,9 @@ export default function AssistenteIA() {
       role: 'assistant',
       content: isRH 
         ? 'Olá! Sou o assistente da Pneu Forte 🔧. Como posso ajudar você hoje com a gestão de candidatos e vagas?'
-        : 'Olá! Sou o assistente da Pneu Forte 🔧. Estou aqui para ajudar com suas candidaturas e dúvidas sobre nossas vagas. Como posso te ajudar?',
+        : user
+        ? 'Olá! Sou o assistente da Pneu Forte 🔧. Estou aqui para ajudar com suas candidaturas e dúvidas sobre nossas vagas. Como posso te ajudar?'
+        : 'Olá! Sou o assistente da Pneu Forte 🔧. Estou aqui para te ajudar a conhecer nossas vagas e tirar dúvidas sobre a empresa. Como posso te ajudar?',
       timestamp: new Date()
     }
   ]);
@@ -58,14 +60,17 @@ export default function AssistenteIA() {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('assistente-ia', {
+      // Não precisa passar token para candidatos anônimos
+      const invokeOptions: any = {
         body: {
           messages: [...messages, userMessage].map(m => ({
             role: m.role,
             content: m.content
           }))
         }
-      });
+      };
+
+      const { data, error } = await supabase.functions.invoke('assistente-ia', invokeOptions);
 
       if (error) throw error;
 
@@ -94,8 +99,6 @@ export default function AssistenteIA() {
   const handleQuickSuggestion = (suggestion: string) => {
     sendMessage(suggestion);
   };
-
-  if (!user) return null;
 
   return (
     <>

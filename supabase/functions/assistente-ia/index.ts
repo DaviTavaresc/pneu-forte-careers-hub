@@ -20,30 +20,36 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    // Get user from authorization header
+    // Get user from authorization header (optional for candidates)
     const authHeader = req.headers.get('Authorization');
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey, {
-      global: { headers: { Authorization: authHeader! } }
+      global: { headers: authHeader ? { Authorization: authHeader } : {} }
     });
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    let user = null;
+    let isRH = false;
+
+    // Try to get authenticated user (RH only)
+    if (authHeader) {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      
+      if (authUser) {
+        user = authUser;
+        
+        // Check if user is RH/Admin
+        const { data: roles } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id);
+        
+        isRH = roles?.some(r => r.role === 'rh' || r.role === 'admin') || false;
+      }
     }
 
-    // Check if user is RH/Admin
-    const { data: roles } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id);
-    
-    const isRH = roles?.some(r => r.role === 'rh' || r.role === 'admin') || false;
+    // User is anonymous candidate if not authenticated
+    const isAnonymousCandidate = !user;
 
     // Define tools based on user role
     const tools = [
@@ -52,18 +58,6 @@ serve(async (req) => {
         function: {
           name: "listar_vagas_ativas",
           description: "Lista todas as vagas ativas disponíveis para candidatura",
-          parameters: {
-            type: "object",
-            properties: {},
-            required: []
-          }
-        }
-      },
-      {
-        type: "function",
-        function: {
-          name: "buscar_status_candidatura",
-          description: "Busca o status das candidaturas do usuário atual",
           parameters: {
             type: "object",
             properties: {},
@@ -84,6 +78,22 @@ serve(async (req) => {
         }
       }
     ];
+
+    // Add authenticated user tool (status de candidatura)
+    if (user && !isRH) {
+      tools.push({
+        type: "function",
+        function: {
+          name: "buscar_status_candidatura",
+          description: "Busca o status das candidaturas do usuário atual",
+          parameters: {
+            type: "object",
+            properties: {},
+            required: []
+          }
+        }
+      });
+    }
 
     // Add RH-only tools
     if (isRH) {
@@ -149,7 +159,8 @@ Sua personalidade:
 - Ajude a equipe de RH a gerenciar candidatos e vagas
 
 Você tem acesso a informações sobre candidatos, vagas e estatísticas do sistema. Use as ferramentas disponíveis quando necessário para buscar dados atualizados.`
-      : `Você é o assistente virtual da Pneu Forte, um mecânico amigável e prestativo. Você está falando com um candidato.
+      : isAnonymousCandidate
+      ? `Você é o assistente virtual da Pneu Forte, um mecânico amigável e prestativo. Você está falando com um visitante interessado em vagas.
 
 Sua personalidade:
 - Amigável e encorajador, como um mecânico de bairro confiável
@@ -158,7 +169,24 @@ Sua personalidade:
 - Motive o candidato e forneça orientações úteis
 
 Você pode ajudar com:
-- Status de candidaturas
+- Informações sobre vagas abertas
+- Detalhes sobre a empresa e cultura
+- Dicas para o processo seletivo
+- Como se candidatar
+
+IMPORTANTE: Se perguntarem sobre candidaturas específicas, explique que eles precisam se candidatar primeiro através do sistema para poder acompanhar o status.
+
+Use as ferramentas disponíveis quando precisar buscar informações específicas.`
+      : `Você é o assistente virtual da Pneu Forte, um mecânico amigável e prestativo. Você está falando com um candidato cadastrado.
+
+Sua personalidade:
+- Amigável e encorajador, como um mecânico de bairro confiável
+- Use metáforas relacionadas a mecânica/pneus quando apropriado (ex: "vamos calibrar seu currículo", "acelerar sua carreira")
+- Seja claro e transparente sobre o processo seletivo
+- Motive o candidato e forneça orientações úteis
+
+Você pode ajudar com:
+- Status das suas candidaturas
 - Informações sobre vagas abertas
 - Detalhes sobre a empresa e cultura
 - Dicas para o processo seletivo
@@ -212,6 +240,10 @@ Use as ferramentas disponíveis quando precisar buscar informações específica
             break;
 
           case "buscar_status_candidatura":
+            if (!user) {
+              result = { error: "Usuário não autenticado" };
+              break;
+            }
             const { data: candidaturas } = await supabase
               .from('candidatos')
               .select('id, nome, etapa_atual, enviado_em, vagas(titulo, area)')
