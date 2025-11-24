@@ -39,9 +39,16 @@ export default function AssistenteIA() {
         "Estatísticas das vagas",
         "Buscar candidato"
       ]
-    : [
+    : user
+    ? [
         "Como está minha candidatura?",
         "Quais vagas estão abertas?",
+        "Me fale sobre a empresa",
+        "Como funciona o processo?"
+      ]
+    : [
+        "Quais vagas estão abertas?",
+        "Quero acompanhar minha candidatura",
         "Me fale sobre a empresa",
         "Como funciona o processo?"
       ];

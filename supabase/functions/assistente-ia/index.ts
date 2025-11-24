@@ -85,10 +85,31 @@ serve(async (req) => {
         type: "function",
         function: {
           name: "buscar_status_candidatura",
-          description: "Busca o status das candidaturas do usuário atual",
+          description: "Busca o status das candidaturas do usuário atual autenticado",
           parameters: {
             type: "object",
             properties: {},
+            required: []
+          }
+        }
+      });
+    }
+
+    // Add tool for anonymous candidates to check status by CPF
+    if (isAnonymousCandidate) {
+      tools.push({
+        type: "function",
+        function: {
+          name: "buscar_candidatura_por_cpf",
+          description: "Busca o status das candidaturas usando o CPF do candidato. SEMPRE explique sobre LGPD antes de pedir o CPF.",
+          parameters: {
+            type: "object",
+            properties: {
+              cpf: {
+                type: "string",
+                description: "CPF do candidato (somente números, 11 dígitos)"
+              }
+            },
             required: []
           }
         }
@@ -172,9 +193,14 @@ Você pode ajudar com:
 - Informações sobre vagas abertas
 - Detalhes sobre a empresa e cultura
 - Dicas para o processo seletivo
-- Como se candidatar
+- Acompanhamento de candidaturas usando CPF
 
-IMPORTANTE: Se perguntarem sobre candidaturas específicas, explique que eles precisam se candidatar primeiro através do sistema para poder acompanhar o status.
+IMPORTANTE - LGPD e Privacidade:
+- Quando o usuário perguntar sobre o status da candidatura, SEMPRE explique primeiro:
+  "Para consultar o status da sua candidatura, precisarei do seu CPF. 🔒 Seus dados são protegidos pela Lei Geral de Proteção de Dados (LGPD). Utilizamos seu CPF apenas para identificar e consultar suas candidaturas, sem armazenar ou compartilhar com terceiros. Pode me informar seu CPF?"
+- NUNCA peça CPF sem explicar sobre LGPD
+- Sempre mascare o CPF nas respostas (ex: ***.456.***-**)
+- Seja transparente sobre o uso dos dados
 
 Use as ferramentas disponíveis quando precisar buscar informações específicas.`
       : `Você é o assistente virtual da Pneu Forte, um mecânico amigável e prestativo. Você está falando com um candidato cadastrado.
@@ -250,6 +276,39 @@ Use as ferramentas disponíveis quando precisar buscar informações específica
               .eq('user_id', user.id)
               .order('enviado_em', { ascending: false });
             result = candidaturas || [];
+            break;
+
+          case "buscar_candidatura_por_cpf":
+            // Validate CPF format (11 digits)
+            const cpf = args.cpf?.replace(/\D/g, '');
+            
+            if (!cpf || cpf.length !== 11) {
+              result = { 
+                error: "CPF inválido. Por favor, forneça um CPF válido com 11 dígitos.",
+                lgpd_notice: true
+              };
+              break;
+            }
+
+            const { data: candidaturasPorCPF } = await supabase
+              .from('candidatos')
+              .select('id, nome, etapa_atual, enviado_em, vagas(titulo, area)')
+              .eq('cpf', cpf)
+              .order('enviado_em', { ascending: false });
+            
+            if (!candidaturasPorCPF || candidaturasPorCPF.length === 0) {
+              result = { 
+                error: "Nenhuma candidatura encontrada com este CPF.",
+                message: "Verifique se o CPF está correto ou se você já se candidatou a alguma vaga."
+              };
+            } else {
+              // Mask CPF in response for privacy
+              result = {
+                candidaturas: candidaturasPorCPF,
+                cpf_mascarado: cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '***.$2.***-**'),
+                lgpd_notice: "Seus dados são protegidos conforme a LGPD."
+              };
+            }
             break;
 
           case "info_empresa":
