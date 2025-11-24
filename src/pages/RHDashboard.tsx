@@ -8,6 +8,7 @@ import { GestaoVagas } from '@/components/rh/GestaoVagas';
 import { PipelineCandidatos } from '@/components/rh/PipelineCandidatos';
 import { Metricas } from '@/components/rh/Metricas';
 import { GestaoUsuarios } from '@/components/rh/GestaoUsuarios';
+import AssistenteIA from '@/components/AssistenteIA';
 
 export default function RHDashboard() {
   const { user, isRH, loading, signOut } = useAuth();
@@ -77,6 +78,7 @@ export default function RHDashboard() {
           </TabsContent>
         </Tabs>
       </main>
+      <AssistenteIA />
     </div>
   );
 }

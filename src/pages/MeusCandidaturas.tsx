@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import AssistenteIA from '@/components/AssistenteIA';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Briefcase, Calendar, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
@@ -143,6 +144,7 @@ export default function MinhasCandidaturas() {
           </div>
         )}
       </main>
+      <AssistenteIA />
     </div>
   );
 }
