@@ -18,12 +18,12 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { candidatoId, curriculoUrl } = await req.json();
+    const { candidato_id, curriculo_url } = await req.json();
 
-    console.log("Gerando resumo do currículo:", { candidatoId, curriculoUrl });
+    console.log("Gerando resumo do currículo:", { candidato_id, curriculo_url });
 
     // Download do currículo do storage
-    const fileName = curriculoUrl.split('/').pop();
+    const fileName = curriculo_url.split('/').pop();
     const { data: fileData, error: downloadError } = await supabase
       .storage
       .from('curriculos')
@@ -82,7 +82,7 @@ serve(async (req) => {
     const { error: updateError } = await supabase
       .from('candidatos')
       .update({ resumo_ia: resumo })
-      .eq('id', candidatoId);
+      .eq('id', candidato_id);
 
     if (updateError) throw updateError;
 

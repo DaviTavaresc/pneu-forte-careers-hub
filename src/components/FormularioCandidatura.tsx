@@ -69,17 +69,16 @@ export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidat
       // Enviar e-mail de confirmação
       await supabase.functions.invoke('enviar-email-etapa', {
         body: {
-          candidatoId: candidato.id,
-          etapa: 'inscrito',
-          tipo: 'confirmacao'
+          candidato_id: candidato.id,
+          nova_etapa: 'inscrito'
         }
       });
 
-      // Gerar resumo com IA (assíncrono)
+      // Gerar resumo com IA (assíncrono) - não precisa aguardar
       supabase.functions.invoke('gerar-resumo-curriculo', {
         body: {
-          candidatoId: candidato.id,
-          curriculoUrl: publicUrl
+          candidato_id: candidato.id,
+          curriculo_url: publicUrl
         }
       });
 
