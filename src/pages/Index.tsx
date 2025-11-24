@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AssistenteIA from '@/components/AssistenteIA';
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -229,6 +230,7 @@ export default function Index() {
           </div>
         )}
       </div>
+      <AssistenteIA />
     </div>
   );
 }
