@@ -280,9 +280,10 @@ Use as ferramentas disponíveis quando precisar buscar informações específica
 
           case "buscar_candidatura_por_cpf":
             // Validate CPF format (11 digits)
-            const cpf = args.cpf?.replace(/\D/g, '');
+            const cpfOriginal = args.cpf;
+            const cpfSomenteNumeros = cpfOriginal?.replace(/\D/g, '');
             
-            if (!cpf || cpf.length !== 11) {
+            if (!cpfSomenteNumeros || cpfSomenteNumeros.length !== 11) {
               result = { 
                 error: "CPF inválido. Por favor, forneça um CPF válido com 11 dígitos.",
                 lgpd_notice: true
@@ -290,10 +291,13 @@ Use as ferramentas disponíveis quando precisar buscar informações específica
               break;
             }
 
+            // Formatar CPF para busca (XXX.XXX.XXX-XX)
+            const cpfFormatado = cpfSomenteNumeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+
             const { data: candidaturasPorCPF } = await supabase
               .from('candidatos')
               .select('id, nome, etapa_atual, enviado_em, vagas(titulo, area)')
-              .eq('cpf', cpf)
+              .eq('cpf', cpfFormatado)
               .order('enviado_em', { ascending: false });
             
             if (!candidaturasPorCPF || candidaturasPorCPF.length === 0) {
@@ -305,7 +309,7 @@ Use as ferramentas disponíveis quando precisar buscar informações específica
               // Mask CPF in response for privacy
               result = {
                 candidaturas: candidaturasPorCPF,
-                cpf_mascarado: cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '***.$2.***-**'),
+                cpf_mascarado: cpfSomenteNumeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '***.$2.***-**'),
                 lgpd_notice: "Seus dados são protegidos conforme a LGPD."
               };
             }

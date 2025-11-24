@@ -6,7 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { FileText, Mail, Phone, Calendar, Download, XCircle } from 'lucide-react';
+import { 
+  FileText, 
+  Mail, 
+  Phone, 
+  Calendar, 
+  Download, 
+  XCircle,
+  Building2 
+} from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
@@ -172,16 +180,21 @@ export function PipelineCandidatos() {
                                       }`}
                                       onClick={() => setCandidatoSelecionado(candidato.id)}
                                     >
-                                      <CardContent className="p-4 space-y-2">
+                                       <CardContent className="p-4 space-y-2">
                                         <div className="font-semibold">{candidato.nome}</div>
                                         <div className="text-sm text-muted-foreground flex items-center gap-1">
-                                          <Briefcase className="h-3 w-3" />
+                                          <Building2 className="h-3 w-3" />
                                           {candidato.vagas?.titulo || 'Vaga não encontrada'}
                                         </div>
                                         <div className="text-xs text-muted-foreground flex items-center gap-1">
                                           <Calendar className="h-3 w-3" />
                                           {new Date(candidato.enviado_em).toLocaleDateString('pt-BR')}
                                         </div>
+                                        {candidato.cpf && (
+                                          <div className="text-xs text-muted-foreground">
+                                            CPF: {candidato.cpf}
+                                          </div>
+                                        )}
                                         {candidato.resumo_ia && (
                                           <div className="text-xs bg-primary/10 p-2 rounded-md mt-2">
                                             <strong>IA:</strong> {candidato.resumo_ia}
@@ -197,7 +210,7 @@ export function PipelineCandidatos() {
                                     <div className="space-y-4">
                                       <div>
                                         <h3 className="font-bold text-xl">{candidato.nome}</h3>
-                                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                        <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
                                           <span className="flex items-center gap-1">
                                             <Mail className="h-4 w-4" />
                                             {candidato.email}
@@ -206,6 +219,12 @@ export function PipelineCandidatos() {
                                             <Phone className="h-4 w-4" />
                                             {candidato.telefone}
                                           </span>
+                                          {candidato.cpf && (
+                                            <span className="flex items-center gap-1">
+                                              <FileText className="h-4 w-4" />
+                                              CPF: {candidato.cpf}
+                                            </span>
+                                          )}
                                         </div>
                                       </div>
 
