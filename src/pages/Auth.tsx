@@ -20,14 +20,10 @@ export default function Auth() {
 
   useEffect(() => {
     if (user && !loading) {
-      // Redirecionar baseado na role
-      if (isRH) {
-        navigate('/rh');
-      } else {
-        navigate('/minhas-candidaturas');
-      }
+      // Redirecionar para home após login
+      navigate('/');
     }
-  }, [user, isRH, loading, navigate]);
+  }, [user, loading, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
