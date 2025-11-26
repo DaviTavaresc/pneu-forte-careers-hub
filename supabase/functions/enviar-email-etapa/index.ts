@@ -86,8 +86,11 @@ serve(async (req) => {
           </p>
           
           <div style="border-top: 2px solid #333; margin-top: 40px; padding-top: 20px; text-align: center;">
-            <p style="font-size: 12px; color: #666; margin: 0;">
+            <p style="font-size: 12px; color: #666; margin: 5px 0;">
               © ${new Date().getFullYear()} Pneu Forte - Todos os direitos reservados
+            </p>
+            <p style="font-size: 11px; color: #888; margin: 5px 0; font-style: italic;">
+              Este é um e-mail automático. Por favor, não responda esta mensagem.
             </p>
           </div>
         </div>` : `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
@@ -122,14 +125,17 @@ serve(async (req) => {
           </p>
           
           <div style="border-top: 2px solid #333; margin-top: 40px; padding-top: 20px; text-align: center;">
-            <p style="font-size: 12px; color: #666; margin: 0;">
+            <p style="font-size: 12px; color: #666; margin: 5px 0;">
               © ${new Date().getFullYear()} Pneu Forte - Todos os direitos reservados
+            </p>
+            <p style="font-size: 11px; color: #888; margin: 5px 0; font-style: italic;">
+              Este é um e-mail automático. Por favor, não responda esta mensagem.
             </p>
           </div>
         </div>`;
 
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'Pneu Forte <onboarding@resend.dev>',
+      from: 'Pneu Forte <noreply@pneuforte.com.br>',
       to: [candidato.email],
       subject: assunto,
       html: mensagem,
