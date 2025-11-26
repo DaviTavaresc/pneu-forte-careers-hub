@@ -66,12 +66,15 @@ export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidat
 
       if (candidatoError) throw candidatoError;
 
-      // Enviar e-mail de confirmação
-      await supabase.functions.invoke('enviar-email-etapa', {
+      // Enviar e-mail de confirmação (assíncrono - não bloqueia o fluxo)
+      supabase.functions.invoke('enviar-email-etapa', {
         body: {
           candidato_id: candidato.id,
           nova_etapa: 'inscrito'
         }
+      }).catch(error => {
+        console.error('Erro ao enviar e-mail:', error);
+        // Email é opcional, não impede a candidatura
       });
 
       // Gerar resumo com IA (assíncrono) - não precisa aguardar
