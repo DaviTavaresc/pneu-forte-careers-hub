@@ -44,10 +44,15 @@ export default function RHDashboard() {
               <p className="text-sm text-muted-foreground">Sistema de Recrutamento</p>
             </div>
           </div>
-          <Button onClick={signOut} variant="outline" size="sm">
-            <LogOut className="h-4 w-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={() => navigate('/')} variant="ghost" size="sm">
+              Voltar
+            </Button>
+            <Button onClick={signOut} variant="outline" size="sm">
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
 
