@@ -135,7 +135,7 @@ serve(async (req) => {
         </div>`;
 
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'Pneu Forte <noreply@pneuforte.com.br>',
+      from: 'Pneu Forte <onboarding@resend.dev>',
       to: [candidato.email],
       subject: assunto,
       html: mensagem,
