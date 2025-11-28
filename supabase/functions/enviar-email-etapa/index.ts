@@ -31,6 +31,15 @@ serve(async (req) => {
 
     if (candidatoError) throw candidatoError;
 
+    // Em modo de teste, o Resend só permite enviar para o email cadastrado
+    // Detecta se está em modo de teste e ajusta o destinatário
+    const RESEND_TEST_EMAIL = 'davitavaresc.22@gmail.com';
+    const isTestMode = true; // Mude para false quando verificar o domínio
+    const emailDestinatario = isTestMode ? RESEND_TEST_EMAIL : candidato.email;
+    const isRedirected = isTestMode && candidato.email !== RESEND_TEST_EMAIL;
+
+    if (candidatoError) throw candidatoError;
+
     const { data: vaga, error: vagaError } = await supabase
       .from('vagas')
       .select('titulo')
@@ -53,7 +62,20 @@ serve(async (req) => {
       ? `Pneu Forte - Agradecimento pela sua Candidatura`
       : `Pneu Forte - Atualização da sua Candidatura`;
 
+    const avisoTeste = isRedirected ? `
+      <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+        <p style="margin: 0; color: #856404; font-size: 14px; font-weight: bold;">
+          ⚠️ MODO DE TESTE ATIVO
+        </p>
+        <p style="margin: 5px 0 0 0; color: #856404; font-size: 13px;">
+          Este email seria enviado para: <strong>${candidato.email}</strong><br>
+          Mas está sendo redirecionado para você pois o domínio ainda não foi verificado no Resend.
+        </p>
+      </div>
+    ` : '';
+
     const mensagem = isReprovado ? `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
+          ${avisoTeste}
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #FFD000; font-size: 28px; margin: 0;">Pneu Forte</h1>
             <div style="width: 60px; height: 4px; background: #FFD000; margin: 15px auto;"></div>
@@ -94,6 +116,7 @@ serve(async (req) => {
             </p>
           </div>
         </div>` : `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); color: #ffffff; padding: 40px; border-radius: 12px;">
+          ${avisoTeste}
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #FFD000; font-size: 28px; margin: 0;">Pneu Forte</h1>
             <div style="width: 60px; height: 4px; background: #FFD000; margin: 15px auto;"></div>
@@ -136,14 +159,14 @@ serve(async (req) => {
 
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'Pneu Forte <onboarding@resend.dev>',
-      to: [candidato.email],
+      to: [emailDestinatario],
       subject: assunto,
       html: mensagem,
     });
 
     if (emailError) throw emailError;
 
-    console.log("E-mail enviado com sucesso");
+    console.log("E-mail enviado com sucesso", isRedirected ? `(redirecionado de ${candidato.email} para ${emailDestinatario})` : `para ${emailDestinatario}`);
 
     return new Response(
       JSON.stringify({ success: true }),
