@@ -34,7 +34,7 @@ serve(async (req) => {
     // Em modo de teste, o Resend só permite enviar para o email cadastrado
     // Detecta se está em modo de teste e ajusta o destinatário
     const RESEND_TEST_EMAIL = 'davitavaresc.22@gmail.com';
-    const isTestMode = true; // Mude para false quando verificar o domínio
+    const isTestMode = false; // Mude para false quando verificar o domínio
     const emailDestinatario = isTestMode ? RESEND_TEST_EMAIL : candidato.email;
     const isRedirected = isTestMode && candidato.email !== RESEND_TEST_EMAIL;
 
