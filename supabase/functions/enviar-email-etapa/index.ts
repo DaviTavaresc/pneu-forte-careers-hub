@@ -34,7 +34,7 @@ serve(async (req) => {
     // Em modo de teste, o Resend só permite enviar para o email cadastrado
     // Detecta se está em modo de teste e ajusta o destinatário
     const RESEND_TEST_EMAIL = 'davitavaresc.22@gmail.com';
-    const isTestMode = true; // Mantenha true enquanto não verificar o domínio próprio
+    const isTestMode = false; // Domínio pneufortenet.com.br verificado no Resend
     const emailDestinatario = isTestMode ? RESEND_TEST_EMAIL : candidato.email;
     const isRedirected = isTestMode && candidato.email !== RESEND_TEST_EMAIL;
 
@@ -158,7 +158,7 @@ serve(async (req) => {
         </div>`;
 
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'Pneu Forte <onboarding@resend.dev>',
+      from: 'Pneu Forte RH <rh@pneufortenet.com.br>',
       to: [emailDestinatario],
       subject: assunto,
       html: mensagem,
