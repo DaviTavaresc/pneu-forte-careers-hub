@@ -302,7 +302,7 @@ export function PipelineCandidatos() {
                                         </Button>
                                       </div>
 
-                                      {candidato.etapa_atual !== 'reprovado' && (
+                                      {candidato.etapa_atual !== 'reprovado' ? (
                                         <div className="space-y-2">
                                           <Button
                                             variant="destructive"
@@ -337,6 +337,22 @@ export function PipelineCandidatos() {
                                             Remover Permanentemente
                                           </Button>
                                         </div>
+                                      ) : (
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="w-full border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                                          onClick={async () => {
+                                            if (confirm(`⚠️ ATENÇÃO: Deseja REMOVER PERMANENTEMENTE a candidatura de ${candidato.nome}? Esta ação NÃO pode ser desfeita.`)) {
+                                              if (confirm('Confirme novamente: Esta ação é IRREVERSÍVEL!')) {
+                                                await deletarCandidato.mutateAsync(candidato.id);
+                                              }
+                                            }
+                                          }}
+                                        >
+                                          <XCircle className="h-4 w-4 mr-2" />
+                                          Remover Permanentemente
+                                        </Button>
                                       )}
 
                                       <div>
