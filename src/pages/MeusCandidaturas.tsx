@@ -36,6 +36,7 @@ export default function MinhasCandidaturas() {
       entrevista: 'Entrevista',
       teste_tecnico: 'Teste Técnico',
       finalizado: 'Finalizado',
+      reprovado: 'Não Aprovado',
     };
     return labels[etapa] || etapa;
   };
@@ -47,6 +48,7 @@ export default function MinhasCandidaturas() {
       entrevista: 'default',
       teste_tecnico: 'default',
       finalizado: 'default',
+      reprovado: 'destructive',
     };
     return variants[etapa] || 'secondary';
   };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,7 +25,7 @@ interface FormData {
 }
 
 export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidaturaProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
@@ -184,11 +184,17 @@ export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidat
           </div>
 
           <div className="flex items-start space-x-3 p-4 bg-muted/30 rounded-lg border border-border/50">
-            <Checkbox
-              id="lgpd"
-              {...register("lgpd", { 
-                required: "Você deve aceitar os termos da LGPD para continuar" 
-              })}
+            <Controller
+              name="lgpd"
+              control={control}
+              rules={{ required: "Você deve aceitar os termos da LGPD para continuar" }}
+              render={({ field }) => (
+                <Checkbox
+                  id="lgpd"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
             />
             <div className="flex-1">
               <Label 
