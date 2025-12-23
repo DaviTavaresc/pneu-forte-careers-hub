@@ -112,10 +112,10 @@ export default function AssistenteIA() {
       {/* Floating Button */}
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg hover:shadow-xl transition-all z-50 bg-[hsl(45,100%,50%)] hover:bg-[hsl(45,100%,45%)] text-black"
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 h-12 w-12 md:h-16 md:w-16 rounded-full shadow-lg hover:shadow-xl transition-all z-50 bg-[hsl(45,100%,50%)] hover:bg-[hsl(45,100%,45%)] text-black"
         size="icon"
       >
-        <Wrench className="h-8 w-8" />
+        <Wrench className="h-6 w-6 md:h-8 md:w-8" />
       </Button>
 
       {/* Chat Sheet */}

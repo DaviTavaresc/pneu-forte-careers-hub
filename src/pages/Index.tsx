@@ -51,79 +51,82 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mouse glow effect */}
-      <div className="glow-cursor"></div>
+      {/* Mouse glow effect - hidden on mobile */}
+      <div className="glow-cursor hidden md:block"></div>
       
       {/* Hero Section */}
-      <div className="hero-gradient text-white py-20 px-4 relative overflow-hidden">
+      <div className="hero-gradient text-white py-12 md:py-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
         
-        {/* Botões de navegação - Canto superior direito */}
-        <div className="absolute top-6 right-6 z-20 flex gap-3">
+        {/* Botões de navegação - Responsivo */}
+        <div className="relative md:absolute md:top-6 md:right-6 z-20 flex flex-wrap justify-center md:justify-end gap-2 md:gap-3 mb-6 md:mb-0">
           {user ? (
             <>
               <Button 
                 onClick={() => navigate('/minhas-candidaturas')}
                 variant="outline"
-                className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
+                size="sm"
+                className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300 text-xs md:text-sm"
               >
-                <User className="h-4 w-4 mr-2" />
-                Minhas Candidaturas
+                <User className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Minhas</span> Candidaturas
               </Button>
               {isRH && (
                 <Button 
                   onClick={() => navigate('/rh')}
                   variant="outline"
-                  className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
+                  size="sm"
+                  className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300 text-xs md:text-sm"
                 >
-                  <Building2 className="h-4 w-4 mr-2" />
-                  Dashboard RH
+                  <Building2 className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">Dashboard</span> RH
                 </Button>
               )}
               <Button 
                 onClick={signOut}
                 variant="outline"
                 size="icon"
-                className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
+                className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300 h-8 w-8 md:h-10 md:w-10"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
             </>
           ) : (
             <Button 
               onClick={() => navigate('/auth')}
               variant="outline"
-              className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300"
+              size="sm"
+              className="bg-background/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary transition-all duration-300 text-xs md:text-sm"
             >
-              <User className="h-4 w-4 mr-2" />
+              <User className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
               Entrar / Cadastrar
             </Button>
           )}
         </div>
 
         <div className="container mx-auto max-w-6xl text-center relative z-10">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 animate-fade-in px-2">
             Acelere sua carreira com a{" "}
             <span className="text-primary glow-text">Pneu Forte</span>
           </h1>
-          <p className="text-xl text-white/90 mb-12 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <p className="text-base sm:text-lg md:text-xl text-white/90 mb-8 md:mb-12 max-w-2xl mx-auto animate-fade-in px-4" style={{ animationDelay: '0.1s' }}>
             Faça parte de uma das maiores distribuidoras de pneus do Norte do Brasil
           </p>
 
           {/* Barra de busca */}
-          <div className="max-w-3xl mx-auto glass-card p-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <div className="flex gap-3">
+          <div className="max-w-3xl mx-auto glass-card p-4 md:p-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                <Search className="absolute left-3 top-3 md:top-3.5 h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Buscar vagas..."
                   value={busca}
                   onChange={(e) => setBusca(e.target.value)}
-                  className="pl-10 bg-background/50"
+                  className="pl-9 md:pl-10 bg-background/50"
                 />
               </div>
-              <Button className="btn-primary">Buscar</Button>
+              <Button className="btn-primary w-full sm:w-auto">Buscar</Button>
             </div>
 
             {/* Filtros */}
@@ -169,10 +172,10 @@ export default function Index() {
       </div>
 
       {/* Lista de Vagas */}
-      <div className="container mx-auto max-w-6xl px-4 py-12">
-        <h2 className="text-3xl font-bold mb-8 text-foreground">
+      <div className="container mx-auto max-w-6xl px-4 py-8 md:py-12">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-foreground">
           Vagas Disponíveis
-          {vagas && <span className="text-primary ml-3">({vagas.length})</span>}
+          {vagas && <span className="text-primary ml-2 md:ml-3">({vagas.length})</span>}
         </h2>
 
         {isLoading ? (
@@ -189,34 +192,34 @@ export default function Index() {
             {vagas.map((vaga, index) => (
               <div
                 key={vaga.id}
-                className="card-3d glass-card p-6 hover:scale-[1.02] transition-all duration-300 cursor-pointer animate-fade-in group"
+                className="glass-card p-4 md:p-6 hover:scale-[1.01] md:hover:scale-[1.02] transition-all duration-300 cursor-pointer animate-fade-in group"
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => navigate(`/vaga/${vaga.id}`)}
               >
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
+                <div className="flex justify-between items-start mb-3 md:mb-4">
+                  <div className="flex-1 min-w-0 pr-2">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground group-hover:text-primary transition-colors break-words">
                       {vaga.titulo}
                     </h3>
-                    <div className="flex flex-wrap gap-3 mt-3 text-sm text-foreground/70">
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-primary" />
-                        <span>{vaga.area}</span>
+                    <div className="flex flex-wrap gap-2 md:gap-3 mt-2 md:mt-3 text-xs sm:text-sm text-foreground/70">
+                      <div className="flex items-center gap-1 md:gap-2">
+                        <Building2 className="h-3 w-3 md:h-4 md:w-4 text-primary flex-shrink-0" />
+                        <span className="truncate">{vaga.area}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-primary" />
-                        <span>{vaga.localidade}</span>
+                      <div className="flex items-center gap-1 md:gap-2">
+                        <MapPin className="h-3 w-3 md:h-4 md:w-4 text-primary flex-shrink-0" />
+                        <span className="truncate">{vaga.localidade}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Briefcase className="h-4 w-4 text-primary" />
-                        <span>{vaga.modelo_trabalho}</span>
+                      <div className="flex items-center gap-1 md:gap-2">
+                        <Briefcase className="h-3 w-3 md:h-4 md:w-4 text-primary flex-shrink-0" />
+                        <span className="truncate">{vaga.modelo_trabalho}</span>
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="h-6 w-6 text-primary group-hover:translate-x-1 transition-transform" />
+                  <ChevronRight className="h-5 w-5 md:h-6 md:w-6 text-primary group-hover:translate-x-1 transition-transform flex-shrink-0" />
                 </div>
                 
-                <p className="text-foreground/70 line-clamp-2">
+                <p className="text-foreground/70 line-clamp-2 text-sm md:text-base">
                   {vaga.descricao}
                 </p>
               </div>
