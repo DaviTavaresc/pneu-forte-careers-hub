@@ -22,10 +22,10 @@ export default function AssistenteIA() {
     {
       role: 'assistant',
       content: isRH 
-        ? 'Olá! Sou o assistente da Pneu Forte 🔧. Como posso ajudar você hoje com a gestão de candidatos e vagas?'
+        ? 'Olá! Sou o assistente de RH da Pneu Forte. Como posso ajudar você hoje com a gestão de candidatos e vagas?'
         : user
-        ? 'Olá! Sou o assistente da Pneu Forte 🔧. Estou aqui para ajudar com suas candidaturas e dúvidas sobre nossas vagas. Como posso te ajudar?'
-        : 'Olá! Sou o assistente da Pneu Forte 🔧. Estou aqui para te ajudar a conhecer nossas vagas e tirar dúvidas sobre a empresa. Como posso te ajudar?',
+        ? 'Olá! Sou o assistente da Pneu Forte. Estou aqui para ajudar com suas candidaturas e dúvidas sobre nossas vagas. Como posso te ajudar?'
+        : 'Olá! Sou o assistente da Pneu Forte. Estou aqui para te ajudar a conhecer nossas vagas e tirar dúvidas sobre a empresa. Como posso te ajudar?',
       timestamp: new Date()
     }
   ]);
