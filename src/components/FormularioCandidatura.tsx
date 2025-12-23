@@ -96,10 +96,10 @@ export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidat
 
   return (
     <>
-      <div className="glass-card p-8 animate-scale-in">
-        <h2 className="text-2xl font-bold text-primary mb-6">Candidate-se Agora</h2>
+      <div className="glass-card p-4 md:p-8 animate-scale-in">
+        <h2 className="text-xl md:text-2xl font-bold text-primary mb-4 md:mb-6">Candidate-se Agora</h2>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
           <div>
             <Label htmlFor="nome" className="text-foreground">Nome Completo</Label>
             <Input
@@ -224,29 +224,29 @@ export function FormularioCandidatura({ vagaId, vagaTitulo }: FormularioCandidat
       </div>
 
       <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-        <DialogContent className="sm:max-w-md bg-background border-primary/20">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-md mx-auto bg-background border-primary/20 p-4 md:p-6">
           <DialogHeader>
-            <div className="flex justify-center mb-4">
-              <div className="rounded-full bg-primary/10 p-3 animate-scale-in">
-                <CheckCircle2 className="h-12 w-12 text-primary animate-glow-pulse" />
+            <div className="flex justify-center mb-3 md:mb-4">
+              <div className="rounded-full bg-primary/10 p-2 md:p-3 animate-scale-in">
+                <CheckCircle2 className="h-8 w-8 md:h-12 md:w-12 text-primary animate-glow-pulse" />
               </div>
             </div>
-            <DialogTitle className="text-2xl text-center text-primary">
+            <DialogTitle className="text-lg md:text-2xl text-center text-primary">
               Obrigado por se candidatar à Pneu Forte!
             </DialogTitle>
-            <DialogDescription className="text-center text-foreground/80 text-base pt-4">
+            <DialogDescription className="text-center text-foreground/80 text-sm md:text-base pt-3 md:pt-4">
               Sua candidatura para a vaga <strong className="text-primary">{vagaTitulo}</strong> foi enviada com sucesso.
               <br /><br />
               Nossa equipe analisará seu perfil e você receberá notícias por e-mail.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-4 md:mt-6">
             <Button
               onClick={() => {
                 setShowSuccessModal(false);
                 navigate('/');
               }}
-              className="btn-primary"
+              className="btn-primary w-full sm:w-auto"
             >
               Voltar para vagas
             </Button>
